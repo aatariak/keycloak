@@ -9,9 +9,22 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::023231733398:role/aatariak_github_registry
+          aws-region: eu-north-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -40,15 +53,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::023231733398:role/aatariak_github_registry
-          aws-region: eu-north-1
+        #- name: Configure AWS Credentials
+        #  uses: aws-actions/configure-aws-credentials@v2
+        #  with:
+        #    role-to-assume: arn:aws:iam::023231733398:role/aatariak_github_registry
+        #    aws-region: eu-north-1
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        #- name: Login to Amazon ECR
+        #  id: login-ecr
+        #  uses: aws-actions/amazon-ecr-login@v1
 
       - name: Download the jar from previous job
         uses: actions/download-artifact@v3

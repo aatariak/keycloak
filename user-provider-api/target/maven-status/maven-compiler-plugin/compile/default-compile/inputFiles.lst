@@ -1,0 +1,9 @@
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/Constants.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/AatariakUserProviderFactory.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/UserAdapter.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/AatariakUserProvider.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/external/CredentialData.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/external/AatariakClient.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/external/AatariakClientSimpleHttp.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/UserRoleModel.java
+/home/namir/Projects/aatariak/keycloak/user-provider-api/src/main/java/com/namir/aatariak/keycloak/provider/api/user/external/AatariakUser.java

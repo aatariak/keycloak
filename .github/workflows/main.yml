@@ -1,0 +1,72 @@
+name: Aatariak Keycloak CI
+run-name: Building Aatariak Keycloak Project
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: maven
+
+      - name: Test and Build with Maven
+        working-directory: user-provider-api
+        run: mvn install --no-transfer-progress --batch-mode --update-snapshots
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jar-build
+          path: user-provider-api/target/*.jar
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::023231733398:role/aatariak_github_registry
+          aws-region: eu-north-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Download the jar from previous job
+        uses: actions/download-artifact@v3
+        with:
+          name: jar-build
+          path: user-provider-api/target
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ secrets.REGISTRY }}
+          REPOSITORY: aatariak-keycloak
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:${{ steps.extract_branch.outputs.branch }} .
+          docker push $REGISTRY/$REPOSITORY:${{ steps.extract_branch.outputs.branch }}
+

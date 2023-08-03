@@ -1,0 +1,41 @@
+version: '3'
+services:
+  db:
+    # Official Postgres image from DockerHub (we use the last version)
+    container_name: aatariak_keycloak_db
+    image: 'postgres:latest'
+
+    ports:
+      - 5429:5432
+
+    environment:
+      POSTGRES_USER: username # The PostgreSQL user (useful to connect to the database)
+      POSTGRES_PASSWORD: password # The PostgreSQL password (useful to connect to the database)
+      POSTGRES_DB: kc_db # The PostgreSQL default database (automatically created at first launch)
+
+
+  keycloak:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    ports:
+      - 8080:8080
+      - 8443:8443
+
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/kc_db
+      KC_DB_USERNAME: username
+      KC_DB_PASSWORD: password
+      KC_HOSTNAME: localhost
+
+    volumes:
+      - ./conf/quarkus.properties:/opt/keycloak/conf/quarkus.properties
+      - ./providers/com.namir-aatariak-user-provider-api.jar:/opt/keycloak/providers/com.namir-aatariak-user-provider-api.jar
+
+    command: start-dev
+
+
